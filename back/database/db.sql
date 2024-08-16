@@ -21,3 +21,8 @@ SELECT * FROM task
 
 -- 특정 사용자 데이터 필터 조회
 SELECT * FROM task WHERE userId = 'minjeong'
+
+-- 데이터 삭제
+DELETE FROM task WHERE _id = '1234';
+
+UPDATE task SET iscompleted = true WHERE _id = '1d3bc561-4d06-4b49-93a2-dfa228900f3f';

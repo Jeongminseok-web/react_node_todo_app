@@ -51,7 +51,7 @@ const Navbar = ({ menuIdx }) => {
   };
 
   return (
-    <nav className="navi bg-[#212121] w-1/5 h-full rounded-sm border border-gray-500 py-10 px-4 flex flex-col justify-between items-center">
+    <nav className="navi bg-[#212121] w-1/5 h-full rounded-sm border border-gray-500 py-10 px-4 flex flex-col justify-between items-center overflow-auto">
       <div className="logo-wrapper flex w-full items-center justify-center gap-6">
         <div className="logo"></div>
         <h2 className="font-semibold text-xl">
