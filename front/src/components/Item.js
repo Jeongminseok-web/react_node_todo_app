@@ -10,6 +10,9 @@ import {
 import { toast } from 'react-toastify';
 import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin5Line } from 'react-icons/ri';
+import { openModal } from '../redux/slices/ModalSlice';
+
+const MAX_DESCRIPTION_LENGTH = 10;
 
 const Item = ({ task }) => {
   const { _id, title, description, date, iscompleted, isimportant, userid } =
@@ -39,12 +42,17 @@ const Item = ({ task }) => {
     }
   };
 
-  const changeCompleted = () => {
-    setIsCompleted(!isCompleted);
+  const changeCompleted = async () => {
+    // setIsCompleted(!isCompleted)을 호출하면 상태 업데이트가 비동기적으로 이루어지기 때문에, isCompleted의 값이 즉시 변경되지 않는다.
+    // 따라서 updateCompletedData 객체를 생성할 때 isCompleted의 이전 값이 사용된다. 이로 인해 true/false가 한 단계씩 밀리게 된다.
+
+    // 상태를 미리 업데이트 하여 반영된 값을 전달
+    const newIsCompleted = !isCompleted;
+    setIsCompleted(newIsCompleted);
 
     const updateCompletedData = {
       itemId: _id,
-      isCompleted: isCompleted,
+      isCompleted: newIsCompleted,
     };
 
     const options = {
@@ -55,24 +63,51 @@ const Item = ({ task }) => {
       body: JSON.stringify(updateCompletedData),
     };
 
-    dispetch(fetchUpdateCompletedData(options));
+    // console.log(options);
+    await dispetch(fetchUpdateCompletedData(options)).unwrap();
+    newIsCompleted
+      ? toast.success('할일을 완료했습니다')
+      : toast.success('할일을 완료하지 못했습니다.');
+    await dispetch(fetchGetItemsData(userid)).unwrap();
   };
+
+  const handleOpenModal = () => {
+    dispetch(openModal({ modalType: 'update', task }));
+  };
+
+  const handleDetailModal = () =>
+    dispetch(openModal({ modalType: 'detail', task }));
+
+  const textCut = (text, maxLength) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  };
+
   return (
     <div className="item w-1/3 h-[25vh] p-1">
       <div className="w-full h-full border border-gay-500 rounded-md flex py-3 px-4 flex-col justify-between bg-neutral-950">
-        <div className="upper">
-          <h2 className="text-xl font-bold mb-3 relative pb-2">
-            <span className="w-full h-[1px] bg-gray-400 absolute bottom-0"></span>
+        <div className="upper overflow-auto">
+          <h2 className="text-xl font-bold mb-3 relative pb-2 flex justify-between">
+            <span className="w-full h-[1px] bg-gray-300 absolute bottom-0"></span>
+
             {title}
+            <span
+              className="text-sm py-1 px-3 border border-gray-300 rounded-md hover:bg-gray-600 cursor-pointer"
+              onClick={handleDetailModal}
+            >
+              자세히
+            </span>
           </h2>
-          <p>{description}</p>
+          <p style={{ whiteSpace: 'pre-wrap' }}>
+            {textCut(description, MAX_DESCRIPTION_LENGTH)}
+          </p>
         </div>
 
         <div className="lower">
           <p className="text-sm mb-1">{date}</p>
           <div className="item-footer flex justify-between">
             <div className="item-footer-left flex gap-x-2">
-              {isCompleted ? (
+              {iscompleted ? (
                 <button
                   className="block py-1 px-4 bg-gradient-to-r from-indigo-400 to-blue-700 text-sm rounded-md"
                   onClick={changeCompleted}
@@ -84,18 +119,20 @@ const Item = ({ task }) => {
                   className="block py-1 px-4 bg-gradient-to-r from-purple-500 to-yellow-500 text-sm rounded-md"
                   onClick={changeCompleted}
                 >
-                  incompleted
+                  InCompleted
                 </button>
               )}
 
-              <button className="block py-1 px-4 bg-gradient-to-r from-sky-500 to-lime-600 text-sm rounded-md hover:from-sky-500 hover:to-lime-600">
-                Inportant
-              </button>
+              {isimportant && (
+                <button className="block py-1 px-4 bg-gradient-to-r from-sky-500 to-lime-600 text-sm rounded-md hover:from-sky-500 hover:to-lime-600">
+                  Important
+                </button>
+              )}
             </div>
 
             <div className="item-footer-right flex gap-x-4 items-center">
               <button>
-                <FaRegEdit className="w-6 h-6" />
+                <FaRegEdit className="w-6 h-6" onClick={handleOpenModal} />
               </button>
               <button>
                 <RiDeleteBin5Line className="w-6 h-6" onClick={deleteItem} />

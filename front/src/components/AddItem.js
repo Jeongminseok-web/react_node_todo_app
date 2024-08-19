@@ -7,7 +7,7 @@ const AddItem = () => {
   const dispatch = useDispatch();
 
   const handleOpenModal = () => {
-    dispatch(openModal());
+    dispatch(openModal({ modalType: 'create', task: null }));
   };
 
   return (

@@ -4,12 +4,14 @@ import {
   GET_TASKS_API_URL,
   POST_TASKS_API_URL,
   UPDATE_COMPLETED_TASKS_URL,
+  UPDATE_TASK_API_URL,
 } from '../../utils/apiUrl'; // API URL 임포트
 import {
   deleteRequest,
   getRequest,
   patchRequest,
   postRequest,
+  putRequest,
 } from '../../utils/requestMethods'; // API 메서드 임포트
 
 // 공동된 비동기 액션 생성 로직을 별도의 함수로 분리
@@ -29,6 +31,16 @@ const postItemFetchThunk = (actionType, apiURL) => {
       body: JSON.stringify(postData), // 표준 json 문자열로 변환
     };
     return await postRequest(apiURL, options);
+  });
+};
+
+const updateItemFetchThunk = (actionType, apiURL) => {
+  return createAsyncThunk(actionType, async (updateData) => {
+    // console.log(updateData);
+    const options = {
+      body: JSON.stringify(updateData), // 표준 json 문자열로 변환
+    };
+    return await putRequest(apiURL, options);
   });
 };
 
@@ -60,6 +72,11 @@ export const fetchPostItemData = postItemFetchThunk(
   POST_TASKS_API_URL
 );
 
+export const fetchPutItemData = updateItemFetchThunk(
+  'fetchPutItem',
+  UPDATE_TASK_API_URL
+);
+
 export const fetchDeleteItemData = deleteItemFetchThunk(
   'fetchDeleteItem',
   DELETE_TASKS_API_URL
@@ -86,6 +103,7 @@ const apiSlice = createSlice({
     postItemData: null,
     deleteItemData: null,
     updateCompletedData: null,
+    updatePutData: null,
   },
   extraReducers: (builder) => {
     builder
@@ -102,7 +120,9 @@ const apiSlice = createSlice({
         fetchUpdateCompletedData.fulfilled,
         handleFullfilled('updateCompletedData')
       )
-      .addCase(fetchUpdateCompletedData.rejected, handleRejected);
+      .addCase(fetchUpdateCompletedData.rejected, handleRejected)
+      .addCase(fetchPutItemData.fulfilled, handleFullfilled('updatePutData'))
+      .addCase(fetchPutItemData.rejected, handleRejected);
   },
 });
 
