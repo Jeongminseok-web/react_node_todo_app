@@ -116,7 +116,7 @@ const Modal = () => {
 
   return (
     <div className="modal fixed bg-black bg-opacity-50 flex items-center justify-center w-full h-full left-0 top-0 z-50">
-      <div className="form-wrapper bg-gray-500 rounded-md w-1/2 flex flex-col items-center relative p-4">
+      <div className="form-wrapper bg-gray-500 rounded-md w-1/2 flex flex-col items-center relative p-4 h-auto">
         <div className="w-full flex flex-col items-center">
           <h2 className="text-2xl py-2 border-b border-gray-300 w-fit font-semibold">
             {modalType === 'update'
@@ -151,6 +151,7 @@ const Modal = () => {
                 value={formData.description}
                 onChange={handleChange}
                 disabled={modalType === 'detail'}
+                className="h-[15vh]"
               />
             </div>
             <div className="input-control">

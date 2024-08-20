@@ -11,7 +11,7 @@ const AddItem = () => {
   };
 
   return (
-    <div className="add-card w-1/3 h-[25vh] p-1">
+    <div className="add-card w-full xl:w-1/3 md:w-1/2 sm:w-full h-[25vh] p-1">
       <div className="w-full h-full border border-gay-500 rounded-md flex items-center justify-center">
         <button
           onClick={handleOpenModal}

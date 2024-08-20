@@ -12,7 +12,7 @@ import { FaRegEdit } from 'react-icons/fa';
 import { RiDeleteBin5Line } from 'react-icons/ri';
 import { openModal } from '../redux/slices/ModalSlice';
 
-const MAX_DESCRIPTION_LENGTH = 10;
+const MAX_DESCRIPTION_LENGTH = 75;
 
 const Item = ({ task }) => {
   const { _id, title, description, date, iscompleted, isimportant, userid } =
@@ -84,9 +84,9 @@ const Item = ({ task }) => {
   };
 
   return (
-    <div className="item w-1/3 h-[25vh] p-1">
-      <div className="w-full h-full border border-gay-500 rounded-md flex py-3 px-4 flex-col justify-between bg-neutral-950">
-        <div className="upper overflow-auto">
+    <div className="item xl:w-1/3 h-[25vh] p-1 md:w-1/2 sm:w-full w-full">
+      <div className="w-full h-full border border-gay-500 rounded-md flex py-3 px-4 flex-col justify-between bg-neutral-950 overflow-hidden">
+        <div className="upper overflow-auto w-full">
           <h2 className="text-xl font-bold mb-3 relative pb-2 flex justify-between">
             <span className="w-full h-[1px] bg-gray-300 absolute bottom-0"></span>
 
@@ -98,7 +98,11 @@ const Item = ({ task }) => {
               자세히
             </span>
           </h2>
-          <p style={{ whiteSpace: 'pre-wrap' }}>
+          <p
+            style={{ whiteSpace: 'pre-wrap' }}
+            className="overflow-hidden text-ellipsis max-w-[95%] flex-grow"
+          >
+            {/* {description} */}
             {textCut(description, MAX_DESCRIPTION_LENGTH)}
           </p>
         </div>
